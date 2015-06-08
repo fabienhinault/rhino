@@ -7,6 +7,8 @@
  */
 package org.mozilla.javascript.tests;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.mozilla.javascript.*;
@@ -44,8 +46,7 @@ public class Bug409702Test extends TestCase {
       Context cx = ContextFactory.getGlobal().enterContext();
       try {
           Scriptable scope = cx.initStandardObjects();
-          Object result = cx.evaluateString(scope, source, "source", 1, null);
-          assertEquals(new Integer(value), result);
+          cx.debugHtml(source, new File("/tmp/source.html"));
       } finally {
           Context.exit();
       }

@@ -544,7 +544,7 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
     }
 
     protected static class DebugPrintVisitor implements NodeVisitor {
-        private StringBuilder buffer;
+        protected StringBuilder buffer;
         private static final int DEBUG_INDENT = 2;
         public DebugPrintVisitor(StringBuilder buf) {
             buffer = buf;
@@ -553,7 +553,7 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
         public String toString() {
             return buffer.toString();
         }
-        private String makeIndent(int depth) {
+        protected String makeIndent(int depth) {
             StringBuilder sb = new StringBuilder(DEBUG_INDENT * depth);
             for (int i = 0; i < (DEBUG_INDENT * depth); i++) {
                 sb.append(" ");
@@ -600,5 +600,13 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
         DebugPrintVisitor dpv = new DebugPrintVisitor(new StringBuilder(1000));
         visit(dpv);
         return dpv.toString();
+    }
+    
+
+    public String debugHtml(String source) {
+    	DebugHtmlVisitor dhv = new DebugHtmlVisitor(new StringBuilder(1000), source);
+        visit(dhv);
+        dhv.finalize();
+        return dhv.toString();
     }
 }

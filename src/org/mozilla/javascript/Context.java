@@ -2663,6 +2663,22 @@ public class Context
             activationNames.remove(name);
     }
 
+    public void debugHtml(String sourceString, File tmpFile) {
+        CompilerEnvirons compilerEnv = new CompilerEnvirons();
+        compilerEnv.initFromContext(this);
+        Parser p = new Parser(compilerEnv, null);
+        AstRoot ast;
+        ast = p.parse(sourceString, "source", 1);
+        BufferedWriter writer;
+        try {
+            writer = new BufferedWriter(new FileWriter(tmpFile));
+            writer.write(ast.debugHtml(sourceString));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private static String implementationVersion;
 
     private final ContextFactory factory;
