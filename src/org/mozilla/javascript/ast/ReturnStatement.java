@@ -74,7 +74,9 @@ public class ReturnStatement extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this) && returnValue != null) {
+            v.pushOffset(position);
             returnValue.visit(v);
+            v.popOffset();
         }
     }
 }

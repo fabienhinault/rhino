@@ -178,8 +178,10 @@ public class InfixExpression extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             left.visit(v);
             right.visit(v);
+            v.popOffset();
         }
     }
 }

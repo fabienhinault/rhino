@@ -24,4 +24,8 @@ public interface NodeVisitor {
      * that are not present in the source when they invoke this method.
      */
     boolean visit(AstNode node);
+
+    void pushOffset(int position);
+
+    void popOffset();
 }

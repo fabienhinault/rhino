@@ -117,10 +117,12 @@ public class VariableInitializer extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             target.visit(v);
             if (initializer != null) {
                 initializer.visit(v);
             }
+            v.popOffset();
         }
     }
 }

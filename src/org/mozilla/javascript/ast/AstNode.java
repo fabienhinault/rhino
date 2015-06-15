@@ -574,6 +574,17 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
             buffer.append("\n");
             return true;  // process kids
         }
+        @Override
+        public void pushOffset(int position) {
+            // TODO Auto-generated method stub
+            
+        }
+        @Override
+        public void popOffset() {
+            // TODO Auto-generated method stub
+            
+        }
+        
     }
 
     /**
@@ -604,9 +615,8 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
     
 
     public String debugHtml(String source) {
-    	DebugHtmlVisitor dhv = new DebugHtmlVisitor(new StringBuilder(1000), source);
+        DebugHtmlVisitor dhv = new DebugHtmlVisitor(source);
         visit(dhv);
-        dhv.finalize();
         return dhv.toString();
     }
 }

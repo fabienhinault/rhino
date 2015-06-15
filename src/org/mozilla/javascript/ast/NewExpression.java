@@ -87,6 +87,7 @@ public class NewExpression extends FunctionCall {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             target.visit(v);
             for (AstNode arg : getArguments()) {
                 arg.visit(v);
@@ -94,6 +95,7 @@ public class NewExpression extends FunctionCall {
             if (initializer != null) {
                 initializer.visit(v);
             }
+            v.popOffset();
         }
     }
 }

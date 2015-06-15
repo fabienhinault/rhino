@@ -93,8 +93,10 @@ public class PropertyGet extends InfixExpression {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             getTarget().visit(v);
             getProperty().visit(v);
+            v.popOffset();
         }
     }
 }

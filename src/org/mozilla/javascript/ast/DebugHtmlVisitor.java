@@ -1,56 +1,85 @@
 package org.mozilla.javascript.ast;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Stack;
+import java.util.TreeMap;
+
 import org.mozilla.javascript.Token;
 import org.mozilla.javascript.ast.AstNode.DebugPrintVisitor;
 
 public class DebugHtmlVisitor extends DebugPrintVisitor {
-    private int depth = -1; // old node depth
-    private String source;
+    private Stack<Integer> offsets;
+    private Integer offset = 0;
+    private Buffer buffer;
 
-    public DebugHtmlVisitor(StringBuilder buf, String source) {
-        super(buf);
-        this.source = source;
-        buffer.append("<!DOCTYPE html>\n<html>\n<head></head>\n<body>");
-    }
-
-    /*
-     * * When nodeDepth == this.depth + 1 nothing to do * When nodeDepth ==
-     * this.depth then close the previous div * When nodeDepth == this.depth - 1
-     * then close 2 divs etc.
-     */
-    private void closeDivs(int nodeDepth) {
-        for (int i = this.depth; i > nodeDepth - 1; i--) {
-            buffer.append(makeIndent(i));
-            buffer.append("</div>");
-        }
-    }
-
-    public void finalize() {
-        closeDivs(0);
+    public DebugHtmlVisitor(String source) {
+        super(new StringBuilder());
+        buffer = new Buffer(source);
+        buffer.insert(0, "<!DOCTYPE html>\n<html>\n<head></head>\n<body>");
         buffer.append("</body>\n</html>\n");
-    }
-
-    private void appendMarkup(String markup, String content, String attributes) {
-        buffer.append("<" + markup + " " + attributes + ">");
-        buffer.append(content);
-        buffer.append("</" + markup + ">");
+        offsets = new Stack<>();
     }
 
     public boolean visit(AstNode node) {
-        int nodeDepth = node.depth();
-        closeDivs(nodeDepth);
-        this.depth = nodeDepth;
-        buffer.append(makeIndent(this.depth));
         int tt = node.getType();
         String name = Token.typeToName(tt);
-        buffer.append("<div style=\"display:inline-block; "
-                + "border-style: solid; border-width: 1px\">");
-        this.appendMarkup("p", name, "");
-        if (tt == Token.NAME) {
-            buffer.append(" ").append(((Name) node).getIdentifier());
-        }
-        buffer.append("\n");
+        buffer.insert(offset + node.getPosition(), "<div style=\"display:inline-block; "
+                + "border-style: solid; border-width: 1px\">" + 
+                "\n" + makeIndent(node.depth()) + name + "<br>");
+//        if (tt == Token.NAME) {
+//            buffer.insert(offset + node.getPosition(), ((Name) node).getIdentifier() + "<br>");
+//        }
+        buffer.insert(offset + node.getPosition() + node.getLength(),
+                "\n" + makeIndent(node.depth()) + "</div>");
         return true;
     }
+    
+    public void pushOffset(int offset){
+        offsets.push(offset);
+        this.offset += offset;
+    }
+    
+    public void popOffset(){
+        offset -= offsets.pop();
+    }
 
+    @Override
+    public String toString() {
+        return buffer.toString();
+    }
+    
+    private class Buffer {
+        private StringBuilder builder;
+        private Map<Integer, Integer> inserts = new TreeMap<>();
+        public Buffer (String source){
+            builder = new StringBuilder(source);
+        }
+        public void insert(int dstOffset, String string){
+            Iterator<Entry<Integer, Integer>> iterator = inserts.entrySet().iterator();
+            int realOffset = dstOffset;
+            while(iterator.hasNext()){
+                Entry<Integer, Integer> entry = iterator.next();
+                if (entry.getKey() <= dstOffset){
+                    realOffset += entry.getValue();
+                } else {
+                    //break;
+                }
+            }
+            builder.insert(realOffset, string);
+            if(inserts.containsKey(dstOffset)){
+                inserts.put(dstOffset, string.length() + inserts.get(dstOffset));
+            } else {
+                inserts.put(dstOffset, string.length());
+            }
+        }
+        public void append(String string){
+            builder.append(string);
+        }
+        public String toString(){
+            return builder.toString();
+        }
+    }
+    
 }

@@ -117,7 +117,9 @@ public class ExpressionStatement extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(this.getPosition());
             expr.visit(v);
+            v.popOffset();
         }
     }
 }

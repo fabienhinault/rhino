@@ -57,9 +57,11 @@ public class Block extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             for (Node kid : this) {
                 ((AstNode)kid).visit(v);
             }
+            v.popOffset();
         }
     }
 }

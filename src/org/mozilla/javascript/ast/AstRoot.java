@@ -147,6 +147,17 @@ public class AstRoot extends ScriptNode {
                              + "\n" + node.toSource(0));
                 return true;
             }
+
+            @Override
+            public void pushOffset(int position) {
+                // TODO Auto-generated method stub
+                
+            }
+            @Override
+            public void popOffset() {
+                // TODO Auto-generated method stub
+                
+            }
         });
     }
 }

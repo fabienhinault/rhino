@@ -191,4 +191,19 @@ public class ArrayLiteral extends AstNode implements DestructuringForm {
             }
         }
     }
+    
+    public String debugHtml(String source){
+        int pos = this.getPosition();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("<div style=\"display:inline-block; "
+                + "border-style: solid; border-width: 1px\">");
+        buffer.append(Token.typeToName(this.getType()));
+        buffer.append("<br>");
+        buffer.append(source.subSequence(pos, pos + this.length));
+        for (AstNode e : getElements()) {
+            buffer.replace(e.position, e.position + e.length, e.debugHtml(source));
+        }
+        buffer.append("</div>");
+        return buffer.toString();
+    }
 }

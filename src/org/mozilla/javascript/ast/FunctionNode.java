@@ -414,6 +414,7 @@ public class FunctionNode extends ScriptNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             if (functionName != null) {
                 functionName.visit(v);
             }
@@ -426,6 +427,7 @@ public class FunctionNode extends ScriptNode {
                     memberExprNode.visit(v);
                 }
             }
+            v.popOffset();
         }
     }
 }

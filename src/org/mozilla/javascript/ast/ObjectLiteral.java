@@ -128,9 +128,11 @@ public class ObjectLiteral extends AstNode implements DestructuringForm {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(this.getPosition());
             for (ObjectProperty prop : getElements()) {
                 prop.visit(v);
             }
+            v.popOffset();
         }
     }
 }
