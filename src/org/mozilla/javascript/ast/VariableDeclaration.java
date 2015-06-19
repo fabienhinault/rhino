@@ -147,9 +147,11 @@ public class VariableDeclaration extends AstNode {
     @Override
     public void visit(NodeVisitor v) {
         if (v.visit(this)) {
+            v.pushOffset(position);
             for (AstNode var : variables) {
                 var.visit(v);
             }
+            v.popOffset();
         }
     }
 }
